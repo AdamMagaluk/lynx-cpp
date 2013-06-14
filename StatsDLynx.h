@@ -9,9 +9,7 @@
 #define	STATSD_LYNX_H
 
 #include <string>
-
-
-#include <netdb.h>
+#include <netdb.h> // addrinfo
 
 #define DEFAULT_STATSD_PORT "8125"
 
@@ -26,6 +24,9 @@ public:
     int gauge(const std::string& metric,const int val);
     int set(const std::string& metric,const int val);
     
+    /**
+     * Enable printing of metric strings to console.
+     */
     bool Debug;
     
 protected:
@@ -36,18 +37,29 @@ protected:
     
     // StatsD Port
     const std::string m_port;
-    
-    
+        
+    // Socket state
     struct {
         int fd;
         struct addrinfo hints, *servinfo, *p;
-        bool init;
     }m_io;
     
+    /**
+     * Initializes socket
+     * 
+     * @return 0 on success
+     */
     int initSocket();
     
+    // Returns if valid metric name, returns false if empty string
     bool validMetric(const std::string& metric);
     
+    /**
+     * Writes string to socket
+     * 
+     * @param str - String to send
+     * @return 0 on success
+     */
     int writeString(const std::string& str);
     
 };
